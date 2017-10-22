@@ -40,13 +40,20 @@ def index():
 @app.route('/newpost', methods=['GET', 'POST'])
 def add_post():
     if request.method == 'POST':
-        error = ''
+
         blog_title = request.form['blog-title']
         blog_body = request.form['blog-body']
 
-        if blog_title or blog_body == '':
-            error = "Please enter text into the submission areas."     
-        if not error:           
+        body_error = ''
+        title_error = ''
+
+        if blog_title == '':
+            title_error = 'please enter a title for your blog.'  
+
+        if blog_body == '':
+            body_error = 'please enter a blog post.'  
+
+        if not title_error and not body_error:           
             new_post = Blog(blog_title, blog_body)
             db.session.add(new_post)
             db.session.commit()            
@@ -56,7 +63,7 @@ def add_post():
 
         else:
             return render_template('newpost.html', blog_title=blog_title, title="Add Blog Entry",
-            blog_body=blog_body, title_error=error, body_error=error)
+            blog_body=blog_body, title_error=title_error, body_error=body_error)
         
     else:
         return render_template('newpost.html')
